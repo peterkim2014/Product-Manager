@@ -1,28 +1,36 @@
 import React, { useState } from 'react'
 import axios from 'axios';
 
-const ProductForm = () => {
+const ProductForm = (props) => {
 
-    const [product, setProduct] = useState({
+    const { product, setProduct } = props;
+
+    const [item, setItem] = useState({
         title: "",
         price: "",
         description: ""
     })
 
     const onChangeHandler = e => {
-        setProduct({
-            ...product,
+        setItem({
+            ...item,
             [e.target.name]: e.target.value
         })
     }
 
     const onSubmitHandler = e => {
         e.preventDefault();
+
+        let title = item.title
+        let price = item.price
+        let description = item.description
+
         axios.post("http://localhost:8000/api/product/create", {
-            product
+            title, price, description
         })
             .then(res => {
                 console.log(res);
+                setProduct([...product, res.data])
             })
             .catch(err => console.log(err))
     }
@@ -32,15 +40,15 @@ const ProductForm = () => {
         <form onSubmit={onSubmitHandler}>
             <label>
                 Title 
-                <input type="text" onChange={onChangeHandler}/>
+                <input name="title"  type="text" onChange={onChangeHandler}/>
             </label>
             <label>
                 Price 
-                <input type="number" onChange={onChangeHandler}/>
+                <input name="price" type="number" onChange={onChangeHandler}/>
             </label>
             <label>
                 Description 
-                <input type="text" onChange={onChangeHandler}/>
+                <input name="description" type="text" onChange={onChangeHandler}/>
             </label>
             <button>Submit</button>
         </form>
